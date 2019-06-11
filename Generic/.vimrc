@@ -33,10 +33,12 @@ autocmd FileType cpp setlocal commentstring=//\ %s
 autocmd FileType cc setlocal commentstring=//\ %s
 autocmd FileType C setlocal commentstring=//\ %s
 
-" Themes and syntax
+"Themes
 
 set background=dark
 colorscheme hybrid
+
+"Syntax
 
 filetype plugin indent on
 syntax on

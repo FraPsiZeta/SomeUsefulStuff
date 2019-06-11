@@ -2,6 +2,8 @@
 
 #Name of the plugins folders, add here when new plugins come
 declare -a names=("vim-commentary" "vim-indent-objects" "vim-hybrid-master" "vim-cpp-enhanced-highlight-master")
+declare -a strings_with_blank_lines=("" "\"Test string for plugins install script" "" "\"Plugins" "" "set runtimepath+=~/.vim/boundle/vim-commentary" "set runtimepath+=~/.vim/boundle/vim-indent-object" "set runtimepath+=~/.vim/boundle/vim-cpp-enhanced-highlight-master/after" "set runtimepath+=~/.vim/boundle/vim-hybrid-master" "" "\"Commentary plugin" "" "autocmd FileType cpp setlocal commentstring=//\ %s" "autocmd FileType cc setlocal commentstring=//\ %s" "autocmd FileType C setlocal commentstring=//\ %s" "" "\"Set Theme" "" "set background=dark" "colorscheme hybrid" "" "\"Cpp Syntax highlight options" "" "let g:cpp_class_scope_highlight = 1" "let g:cpp_member_variable_highlight = 1" "let g:cpp_class_decl_highlight = 1" "")
+declare -a strings_with_no_blank_lines=("\"Test string for plugins install script" "\"Plugins" "set runtimepath+=~/.vim/boundle/vim-commentary" "set runtimepath+=~/.vim/boundle/vim-indent-object" "set runtimepath+=~/.vim/boundle/vim-cpp-enhanced-highlight-master/after" "set runtimepath+=~/.vim/boundle/vim-hybrid-master" "\"Commentary plugin" "autocmd FileType cpp setlocal commentstring=" "autocmd FileType cc setlocal commentstring=" "autocmd FileType C setlocal commentstring=" "\"Set Theme" "set background=dark" "colorscheme hybrid" "\"Cpp Syntax highlight options" "let g:cpp_class_scope_highlight = 1" "let g:cpp_member_variable_highlight = 1" "let g:cpp_class_decl_highlight = 1")
 
 vimrc="$HOME/.vimrc"
 teststring="\"Test string for plugins install script"
@@ -21,33 +23,19 @@ while true; do
 	if [[ $? -eq 0 ]] ; then
 		echo "Plugins copied in $vimpath!"
 		if [[ -z "$(grep "$teststring" "$vimrc")" ]] ; then
-			echo >> $vimrc
-			echo -e "\"Test string for plugins install script" >> $vimrc
-			echo >> $vimrc
-			echo -e "\"Plugins" >> $vimrc
-			echo >> $vimrc
-			echo -e "set runtimepath+=~/.vim/boundle/vim-commentary" >> $vimrc
-			echo -e "set runtimepath+=~/.vim/boundle/vim-indent-object" >> $vimrc
-			echo -e "set runtimepath+=~/.vim/boundle/vim-cpp-enhanced-highlight-master/after" >> $vimrc
-			echo -e "set runtimepath+=~/.vim/boundle/vim-hybrid-master" >> $vimrc
-			echo >> $vimrc
-			echo -e "\"Commentary plugin" >> $vimrc
-			echo >> $vimrc
-			echo -e "autocmd FileType cpp setlocal commentstring=//\ %s" >> $vimrc
-			echo -e "autocmd FileType cc setlocal commentstring=//\ %s" >> $vimrc
-			echo -e "autocmd FileType C setlocal commentstring=//\ %s" >> $vimrc
-			echo >> $vimrc
-			echo -e "\"Set Theme" >> $vimrc
-			echo >> $vimrc
-			echo -e "set background=dark" >> $vimrc
-			echo -e "colorscheme hybrid" >> $vimrc
-			echo >> $vimrc
-			echo -e "\"Cpp Syntax highlight options" >> $vimrc
-			echo >> $vimrc
-			echo -e "let g:cpp_class_scope_highlight = 1" >> $vimrc
-			echo -e "let g:cpp_member_variable_highlight = 1" >> $vimrc
-			echo -e "let g:cpp_class_decl_highlight = 1" >> $vimrc
-			echo >> $vimrc
+			for j in "${strings_with_blank_lines[@]}"
+			do
+				echo -e "$j" >> $vimrc
+			done
+		else
+			for k in "${strings_with_no_blank_lines[@]}"
+			do
+				sed -i '\,'"$k"',d' $vimrc
+			done
+			for l in "${strings_with_blank_lines[@]}"
+			do
+				echo -e "$l" >> $vimrc
+			done
 		fi
 	else
 		echo "Something went wrong.."
@@ -58,33 +46,19 @@ else
 	if [[ $? -eq 0 ]] ; then
 		echo "Created $vimpath directory and copied plugins in it!"
 		if [[ -z "$(grep "$teststring" "$vimrc")" ]] ; then
-			echo >> $vimrc
-			echo -e "\"Test string for plugins install script" >> $vimrc
-			echo >> $vimrc
-			echo -e "\"Plugins" >> $vimrc
-			echo >> $vimrc
-			echo -e "set runtimepath+=~/.vim/boundle/vim-commentary" >> $vimrc
-			echo -e "set runtimepath+=~/.vim/boundle/vim-indent-object" >> $vimrc
-			echo -e "set runtimepath+=~/.vim/boundle/vim-cpp-enhanced-highlight-master/after" >> $vimrc
-			echo -e "set runtimepath+=~/.vim/boundle/vim-hybrid-master" >> $vimrc
-			echo >> $vimrc
-			echo -e "\"Commentary plugin" >> $vimrc
-			echo >> $vimrc
-			echo -e "autocmd FileType cpp setlocal commentstring=//\ %s" >> $vimrc
-			echo -e "autocmd FileType cc setlocal commentstring=//\ %s" >> $vimrc
-			echo -e "autocmd FileType C setlocal commentstring=//\ %s" >> $vimrc
-			echo >> $vimrc
-			echo -e "\"Set Theme" >> $vimrc
-			echo >> $vimrc
-			echo -e "set background=dark" >> $vimrc
-			echo -e "colorscheme hybrid" >> $vimrc
-			echo >> $vimrc
-			echo -e "\"Cpp Syntax highlight options" >> $vimrc
-			echo >> $vimrc
-			echo -e "let g:cpp_class_scope_highlight = 1" >> $vimrc
-			echo -e "let g:cpp_member_variable_highlight = 1" >> $vimrc
-			echo -e "let g:cpp_class_decl_highlight = 1" >> $vimrc
-			echo >> $vimrc
+			for j in "${strings_with_blank_lines[@]}"
+			do
+				echo -e "$j" >> $vimrc
+			done
+		else
+			for k in "${strings_with_no_blank_lines[@]}"
+			do
+				sed -i '\,'"$k"',d' $vimrc
+			done
+			for l in "${strings_with_blank_lines[@]}"
+			do
+				echo -e "$l" >> $vimrc
+			done
 		fi
 	else
 		echo "Something went wrong.."
