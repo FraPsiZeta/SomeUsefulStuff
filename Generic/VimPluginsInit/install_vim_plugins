@@ -1,0 +1,97 @@
+#!/bin/bash
+
+#Name of the plugins folders, add here when new plugins come
+declare -a names=("vim-commentary" "vim-indent-objects" "vim-hybrid-master" "vim-cpp-enhanced-highlight-master")
+
+vimrc="$HOME/.vimrc"
+teststring="\"Test string for plugins install script"
+vimpath="$HOME/.vim/boundle"
+
+echo "This script install some plugins on .vim/boundle folder, and set the runtimepath to find them in .vimrc. The script installation is done without any plugin manager, but it could break something if some of the plugins are already installed in some other path or with some p.m. The plugins that will get install are:"
+for i in ${names[@]}
+do
+	echo "-> $i"
+done
+
+while true; do
+    read -p "Do you wish to install this plugins (y/n)?" yn
+    case $yn in
+        [Yy]* ) if [[ -d "$vimpath" ]] ; then
+	cp -n -r ./boundle/* $vimpath
+	if [[ $? -eq 0 ]] ; then
+		echo "Plugins copied in $vimpath!"
+		if [[ -z "$(grep "$teststring" "$vimrc")" ]] ; then
+			echo >> $vimrc
+			echo -e "\"Test string for plugins install script" >> $vimrc
+			echo >> $vimrc
+			echo -e "\"Plugins" >> $vimrc
+			echo >> $vimrc
+			echo -e "set runtimepath+=~/.vim/boundle/vim-commentary" >> $vimrc
+			echo -e "set runtimepath+=~/.vim/boundle/vim-indent-object" >> $vimrc
+			echo -e "set runtimepath+=~/.vim/boundle/vim-cpp-enhanced-highlight-master/after" >> $vimrc
+			echo -e "set runtimepath+=~/.vim/boundle/vim-hybrid-master" >> $vimrc
+			echo >> $vimrc
+			echo -e "\"Commentary plugin" >> $vimrc
+			echo >> $vimrc
+			echo -e "autocmd FileType cpp setlocal commentstring=//\ %s" >> $vimrc
+			echo -e "autocmd FileType cc setlocal commentstring=//\ %s" >> $vimrc
+			echo -e "autocmd FileType C setlocal commentstring=//\ %s" >> $vimrc
+			echo >> $vimrc
+			echo -e "\"Set Theme" >> $vimrc
+			echo >> $vimrc
+			echo -e "set background=dark" >> $vimrc
+			echo -e "colorscheme hybrid" >> $vimrc
+			echo >> $vimrc
+			echo -e "\"Cpp Syntax highlight options" >> $vimrc
+			echo >> $vimrc
+			echo -e "let g:cpp_class_scope_highlight = 1" >> $vimrc
+			echo -e "let g:cpp_member_variable_highlight = 1" >> $vimrc
+			echo -e "let g:cpp_class_decl_highlight = 1" >> $vimrc
+			echo >> $vimrc
+		fi
+	else
+		echo "Something went wrong.."
+	fi
+else
+	mkdir $vimpath
+	cp -r ./boundle/* $vimpath
+	if [[ $? -eq 0 ]] ; then
+		echo "Created $vimpath directory and copied plugins in it!"
+		if [[ -z "$(grep "$teststring" "$vimrc")" ]] ; then
+			echo >> $vimrc
+			echo -e "\"Test string for plugins install script" >> $vimrc
+			echo >> $vimrc
+			echo -e "\"Plugins" >> $vimrc
+			echo >> $vimrc
+			echo -e "set runtimepath+=~/.vim/boundle/vim-commentary" >> $vimrc
+			echo -e "set runtimepath+=~/.vim/boundle/vim-indent-object" >> $vimrc
+			echo -e "set runtimepath+=~/.vim/boundle/vim-cpp-enhanced-highlight-master/after" >> $vimrc
+			echo -e "set runtimepath+=~/.vim/boundle/vim-hybrid-master" >> $vimrc
+			echo >> $vimrc
+			echo -e "\"Commentary plugin" >> $vimrc
+			echo >> $vimrc
+			echo -e "autocmd FileType cpp setlocal commentstring=//\ %s" >> $vimrc
+			echo -e "autocmd FileType cc setlocal commentstring=//\ %s" >> $vimrc
+			echo -e "autocmd FileType C setlocal commentstring=//\ %s" >> $vimrc
+			echo >> $vimrc
+			echo -e "\"Set Theme" >> $vimrc
+			echo >> $vimrc
+			echo -e "set background=dark" >> $vimrc
+			echo -e "colorscheme hybrid" >> $vimrc
+			echo >> $vimrc
+			echo -e "\"Cpp Syntax highlight options" >> $vimrc
+			echo >> $vimrc
+			echo -e "let g:cpp_class_scope_highlight = 1" >> $vimrc
+			echo -e "let g:cpp_member_variable_highlight = 1" >> $vimrc
+			echo -e "let g:cpp_class_decl_highlight = 1" >> $vimrc
+			echo >> $vimrc
+		fi
+	else
+		echo "Something went wrong.."
+	fi
+fi; break;;
+        [Nn]* ) break;;
+        * ) echo "Please answer y or n.";;
+    esac
+done
+

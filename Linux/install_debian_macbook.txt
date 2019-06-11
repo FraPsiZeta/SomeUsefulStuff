@@ -1,0 +1,194 @@
+
+### Wi-Fi ###
+- Se non presente aggiungi la componente non-free nelle sorgenti
+- apt-get update
+- apt-get install linux-image-$(uname -r|sed 's,[^-]*-[^-]*-,,') linux-headers-$(uname -r|sed 's,[^-]*-[^-]*-,,') broadcom-sta-dkms
+- modprobe -r b44 b43 b43legacy ssb brcmsmac bcma
+- modprobe wl
+
+### Problema sospensione: ###
+- Dopo la prima sospensione il laptop non mantiene lo stato di sleep a causa del lettore di SD (dopo la sospensione tale lettore resta in uno stato strano, disabilitato ma non del tutto, e impedisce al sistema di sospendersi, si vede da journalctl). Per risolvere il problema è necesssario disattivare il lettore di SD all'avvio (crontab da root con "@reboot echo 1 > /sys/bus/usb/devices/2-4/remove", controlla questo percorso perchè l'ho scritto a memoria).
+
+
+### Video con deconding hardware: ###
+- Download mpv
+- Aggiungi un file di configurazione /home/$USER/.conf/mpv/mpv.conf: "hwdec=vaapi"
+
+### MenuLibre per modificare icone e nomi applicazioni (salome->builder) ###
+
+
+### Per controllare gli Interrupts: ###
+- grep . -r /sys/firmware/acpi/interrupts/
+- (Se vuoi fai un backup dell'interrupts incriminato)
+- echo "disable" > /sys/firmware/acpi/interrupts/gpeX
+- crontab -e 
+  Aggiungi la riga: @reboot echo "disable" > /sys/firmware/acpi/interrupts/gpe16
+- touch /etc/pm/sleep.d/30_disable_gpeX
+- chmod +x /etc/pm/sleep.d/30_disable_gpeX
+- vim /etc/pm/sleep.d/30_disable_gpeX
+  Aggiungi: 
+###################################################
+#!/bin/bash
+case "$1" in
+    thaw|resume)
+        echo disable > /sys/firmware/acpi/interrupts/gpe16 2>/dev/null
+        ;;
+    *)
+        ;;
+esac
+exit $?
+###################################################
+
+
+### Sources di Debian in /etc/apt/sources.list: ###
+
+# Repository principale
+deb http://ftp.it.debian.org/debian/ stretch main contrib non-free
+deb-src http://ftp.it.debian.org/debian/ stretch main contrib non-free
+
+# Aggiornamenti di sicurezza
+deb http://security.debian.org/ stretch/updates main contrib non-free
+deb-src http://security.debian.org/ stretch/updates main contrib non-free
+
+# Aggiornamenti raccomandati (ex-volatile)
+deb http://ftp.it.debian.org/debian/ stretch-updates main contrib non-free
+deb-src http://ftp.it.debian.org/debian/ stretch-updates main contrib non-free
+
+# Backports
+deb http://ftp.it.debian.org/debian/ stretch-backports main contrib non-free
+deb-src http://ftp.it.debian.org/debian/ stretch-backports main contrib non-free
+
+# Debian unstable (Sid)
+#deb http://ftp.it.debian.org/debian/ sid main
+#deb-src http://ftp.it.debian.org/debian/ sid main
+
+
+
+
+### Installa tlp (da backports) ###
+
+### Disabilita bluetooth: ###
+- systemctl disable blutooth
+- rfkill block bluetooth 
+
+### In /etc/systemd/logind.conf ho scommentato "HandleLidSwitch=suspend". ###
+
+### Icone: Papirus ###
+### Tema: Vimux-dark [Per ridurre le dimensioni della barra del titolo delle appliczioni e della top bar si sono utilizzati i seguenti comandi: ###
+- Modificato in /home/$USER/.themes/vimix-dark/gnome-shell/gnome-shell.css nella funzione "#panel" il parametro "height" a 24px.
+- Aggiunto un file in /home/$USER/.config/gtk-3.0/gtk.css con il seguente contenuto:
+
+##################################################################
+ 
+window.ssd headerbar.titlebar {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    min-height: 0;
+}
+
+window.ssd headerbar.titlebar button.titlebutton {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    min-height: 0;
+}
+/* shrink headebars */
+headerbar {
+    min-height: 38px;
+    padding-left: 2px; /* same as childrens vertical margins for nicer proportions */
+    padding-right: 2px;
+}
+
+headerbar entry,
+headerbar spinbutton,
+headerbar button,
+headerbar separator {
+    margin-top: 2px; /* same as headerbar side padding for nicer proportions */
+    margin-bottom: 2px;
+}
+
+/* shrink ssd titlebars */
+.default-decoration {
+    min-height: 0; /* let the entry and button drive the titlebar size */ 
+    padding: 2px
+}
+
+.default-decoration .titlebutton {
+    min-height: 26px; /* tweak these two props to reduce button size */
+    min-width: 26px;
+}
+
+######################################################################
+
+
+### Script Fanblast: ###
+
+######################################################################
+
+#!/bin/bash
+
+curr_temp="$( sensors | grep 'Core 1' | grep -o '[0-9]*' | sed -n '1!p' | head -n1 )"
+
+max_rpm1=6156
+max_rpm2=5700
+medium_rpm1=4200
+medium_rpm2=3900
+
+
+##################   Pulizia crontab   ###################
+
+crontab -l > /tmp/tmp_crontab
+sed -i '/fanblast.sh/d' /tmp/tmp_crontab
+crontab /tmp/tmp_crontab
+rm /tmp/tmp_crontab &> /dev/null
+
+#################   Loop Temperature   ##################
+
+if [ "$1" == 1 ] ; then
+	crontab -l > /tmp/tmp_crontab
+	echo "*  *  *  *  *  /usr/local/bin/fanblast.sh 1" >> /tmp/tmp_crontab
+	crontab /tmp/tmp_crontab
+	rm /tmp/tmp_crontab
+	if [ $curr_temp -gt 85 ] ; then
+		echo 1 > /sys/devices/platform/applesmc.768/fan1_manual
+		echo 1 > /sys/devices/platform/applesmc.768/fan2_manual
+		echo $max_rpm1 > /sys/devices/platform/applesmc.768/fan1_output
+		echo $max_rpm2 > /sys/devices/platform/applesmc.768/fan2_output
+	elif [ $curr_temp -gt 68 -a $curr_temp -lt 86 ] ; then	
+		echo 1 > /sys/devices/platform/applesmc.768/fan1_manual
+		echo 1 > /sys/devices/platform/applesmc.768/fan2_manual
+		echo $medium_rpm1 > /sys/devices/platform/applesmc.768/fan1_output
+		echo $medium_rpm2 > /sys/devices/platform/applesmc.768/fan2_output
+	elif [ $curr_temp -lt 69 ] ; then
+		echo 0 > /sys/devices/platform/applesmc.768/fan1_manual
+		echo 0 > /sys/devices/platform/applesmc.768/fan2_manual
+		crontab -l > /tmp/tmp_crontab
+		sed -i '/fanblast.sh/d' /tmp/tmp_crontab
+		crontab /tmp/tmp_crontab
+		rm /tmp/tmp_crontab
+	fi
+elif [ "$1" == 0 ] ; then
+	echo 0 > /sys/devices/platform/applesmc.768/fan1_manual
+	echo 0 > /sys/devices/platform/applesmc.768/fan2_manual
+	crontab -l > /tmp/tmp_crontab
+	sed -i '/fanblast.sh/d' /tmp/tmp_crontab
+	crontab /tmp/tmp_crontab
+	rm /tmp/tmp_crontab
+
+
+
+##############   Attivazione forzata   ###################
+
+elif [ "$1" == 99 ] ; then
+	echo 1 > /sys/devices/platform/applesmc.768/fan1_manual
+	echo 1 > /sys/devices/platform/applesmc.768/fan2_manual
+	echo $max_rpm1 > /sys/devices/platform/applesmc.768/fan1_output
+	echo $max_rpm2 > /sys/devices/platform/applesmc.768/fan2_output
+		
+else
+	echo "Nessun comando: 1 Per attivare le ventole, 0 per disattivarle (99 per attivarle a massima velocità, per qualsiasi temperatura della CPU)." 	
+fi
+
+######################################################################
+
+
+

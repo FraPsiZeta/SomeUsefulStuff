@@ -1,0 +1,26 @@
+bind TAB:menu-complete
+export CLICOLOR=1
+PS1='Fra#Psi $ '
+decodedir(){
+openssl enc -aes-256-cbc -d -in "$1" -out "$2" && tar -xf "$2" && rm "$2"
+}
+bat(){ echo ;system_profiler SPPowerDataType | grep -E "Charge Capacity|Charge Remaining|Cycle"; echo -n "    " ; system_profiler SPPowerDataType | grep "Amperage" ; echo ; }
+
+alias doc='cd ~/Documents/Uni./'
+alias fancontrol='sudo sandbox-exec -f nonet.sb /Applications/Macs\ Fan\ Control.app/Contents/MacOS/MacsFanControl'
+
+HISTSIZE=99000
+HISTFILESIZE=99000
+
+#Prevent Pinentry from gpg to show up the GUI
+export GPG_TTY=$(tty)
+export PINENTRY_USER_DATA="USE_CURSES=1"
+
+##
+# Your previous /Users/Fra/.bash_login file was backed up as /Users/Fra/.bash_login.macports-saved_2018-12-29_at_22:40:57
+##
+
+# MacPorts Installer addition on 2018-12-29_at_22:40:57: adding an appropriate PATH variable for use with MacPorts.
+export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+# Finished adapting your PATH environment variable for use with MacPorts.
+
