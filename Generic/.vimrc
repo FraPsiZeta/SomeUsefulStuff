@@ -33,12 +33,10 @@ autocmd FileType cpp setlocal commentstring=//\ %s
 autocmd FileType cc setlocal commentstring=//\ %s
 autocmd FileType C setlocal commentstring=//\ %s
 
-"Themes
+" Themes and syntax
 
 set background=dark
 colorscheme hybrid
-
-"Syntax
 
 filetype plugin indent on
 syntax on
@@ -61,15 +59,17 @@ map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
 map L $
-inoremap jk <esc>
-vnoremap jk <esc>
+inoremap jj <esc>
+vnoremap jkl <esc>
 nnoremap ,, ,
 nnoremap ,l /
 
 " Latex stuff
 
-autocmd Filetype tex inoremap ,mm <Esc>:w <bar> !pdflatex % && open %:r.pdf<ENTER>
-autocmd Filetype tex noremap ,mm <Esc>:w <bar> !pdflatex % && open %:r.pdf<ENTER>
+autocmd Filetype tex inoremap ,mm <Esc>:w <bar> !pdflatex tesi.tex<ENTER>
+autocmd Filetype tex inoremap ,kk <Esc>:w <bar> !pdflatex % && open %:r.pdf<ENTER>
+autocmd Filetype tex noremap ,mm <Esc>:w <bar> !pdflatex tesi.tex<ENTER>
+autocmd Filetype tex noremap ,kk <Esc>:w <bar> !pdflatex % && open %:r.pdf<ENTER>
 autocmd Filetype tex inoremap ,e \begin{equation}<Enter><Enter>\end{equation}<Esc>ki
 autocmd Filetype tex inoremap ,emp \emph{}<Esc>i
 autocmd Filetype tex inoremap ,bf \textbf{}<Esc>i
