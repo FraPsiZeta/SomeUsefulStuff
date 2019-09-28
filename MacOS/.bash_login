@@ -1,6 +1,8 @@
 bind TAB:menu-complete
 export CLICOLOR=1
-PS1='Fra#Psi $ '
+PS1='\[\e[0:92m\]Fra#Psi:\w>\[\e[m\]'
+#PS1='Fra#Psi:\w>'
+
 decodedir(){
 openssl enc -aes-256-cbc -d -in "$1" -out "$2" && tar -xf "$2" && rm "$2"
 }
@@ -11,6 +13,7 @@ alias tesi='cd ~/Documents/Uni./TesiM/Tesi/tesi_quarta'
 alias doc='cd ~/Documents/Uni./'
 alias fancontrol='sudo sandbox-exec -f nonet.sb /Applications/Macs\ Fan\ Control.app/Contents/MacOS/MacsFanControl'
 
+alias vim='/opt/local/bin/vim'
 
 #Prevent Pinentry from gpg to show up the GUI
 export GPG_TTY=$(tty)
@@ -21,7 +24,7 @@ export PINENTRY_USER_DATA="USE_CURSES=1"
 ##
 
 # MacPorts Installer addition on 2018-12-29_at_22:40:57: adding an appropriate PATH variable for use with MacPorts.
-export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+export PATH="/opt/local/bin:/opt/local/sbin:$PATH:/opt/local/Library/Frameworks/Python.framework/Versions/3.7/bin"
 # Finished adapting your PATH environment variable for use with MacPorts.
 
 # don't put duplicate lines or lines starting with space in the history.

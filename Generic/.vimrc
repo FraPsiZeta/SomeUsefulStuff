@@ -13,28 +13,34 @@ au BufWrite /private/tmp/crontab.* set nowritebackup nobackup
 " Don't write backup file if vim is being called by "chpass"
 au BufWrite /private/etc/pw.* set nowritebackup nobackup
 
+"Set file directory 
+"
+set autochdir
+
 "Test string for plugins install script
 
 " Plugins
+"
 set runtimepath+=~/.vim/boundle/vim-commentary
 set runtimepath+=~/.vim/boundle/vim-indent-object
 set runtimepath+=~/.vim/boundle/vim-hybrid-master
 set runtimepath+=~/.vim/boundle/vim-cpp-enhanced-highlight-master/after
+set runtimepath+=~/.vim/boundle/YouCompleteMe
 
 "Cpp Syntax highlight options
-
+"
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1
 
 "Commentary plugin
-
+"
 autocmd FileType cpp setlocal commentstring=//\ %s
 autocmd FileType cc setlocal commentstring=//\ %s
 autocmd FileType C setlocal commentstring=//\ %s
 
 " Themes and syntax
-
+"
 set background=dark
 colorscheme hybrid
 
@@ -42,7 +48,7 @@ filetype plugin indent on
 syntax on
 
 set number relativenumber
-
+set cursorline
 
 let mapleader=" "
 
@@ -51,6 +57,15 @@ let mapleader=" "
 set tabstop=3      
 set shiftwidth=3    
 
+" YCM stuff
+	
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_global_ycm_extra_conf = '~/.vim/boundle/YouCompleteMe/.ycm_extra_conf.py'
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_auto_trigger = 1
+
+" Apply YCM FixIt
+map ,ac :YcmCompleter FixIt<CR>
 
 " Mappings
 
@@ -58,19 +73,19 @@ map <C-h> <C-w>h
 map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
-map L $
 map ,., <esc>:wq<Enter>
 inoremap jj <esc>
 vnoremap jkl <esc>
+nnoremap K $
 nnoremap ,, ,
 nnoremap ,l /
 
 " Latex stuff
 
-autocmd Filetype tex inoremap ,mm <Esc>:w <bar> !pdflatex tesi.tex<ENTER>
-autocmd Filetype tex inoremap ,kk <Esc>:w <bar> !pdflatex % && open %:r.pdf<ENTER>
-autocmd Filetype tex noremap ,mm <Esc>:w <bar> !pdflatex tesi.tex<ENTER>
-autocmd Filetype tex noremap ,kk <Esc>:w <bar> !pdflatex % && open %:r.pdf<ENTER>
+autocmd Filetype tex inoremap ,mm <Esc>:wa <bar> !pdflatex tesi.tex<ENTER>
+autocmd Filetype tex inoremap ,kk <Esc>:wa <bar> !pdflatex % && open %:r.pdf<ENTER>
+autocmd Filetype tex noremap ,mm <Esc>:wa <bar> !pdflatex tesi.tex<ENTER>
+autocmd Filetype tex noremap ,kk <Esc>:wa <bar> !pdflatex % && open %:r.pdf<ENTER>
 autocmd Filetype tex inoremap ,e \begin{equation}<Enter><Enter>\end{equation}<Esc>ki
 autocmd Filetype tex inoremap ,emp \emph{}<Esc>i
 autocmd Filetype tex inoremap ,bf \textbf{}<Esc>i
