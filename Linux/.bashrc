@@ -1,15 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w$ '
-
-#alias nolim='su root;sed -r -i 's/CPU_SCALING_MAX_FREQ_ON_BAT=1800000|CPU_SCALING_MAX_FREQ_ON_BAT=1500000/CPU_SCALING_MAX_FREQ_ON_BAT=3200000/' /etc/default/tlp;sudo tlp start;sed -i 'e/CPU_SCALING_MAX_FREQ_ON_BAT=3200000/#CPU_SCALING_MAX_FREQ_ON_BAT=3200000/' /etc/default/tlp;su frapsi'
-#alias lim1500='su root;sed -i 's/#CPU_SCALING_MAX_FREQ_ON_BAT=0/CPU_SCALING_MAX_FREQ_ON_BAT=1500000/' /etc/default/tlp;sudo tlp start;su frapsi'
-#alias lim1800='su root; sed -i 's/#CPU_SCALING_MAX_FREQ_ON_BAT=0/CPU_SCALING_MAX_FREQ_ON_BAT=1800000/' /etc/default/tlp;sudo tlp start;su frapsi'
-
-
-
-
+PS1="\[\e[92m\]Fra#Psi:\w>\[\e[m\]"
 
 bind TAB:menu-complete
 
