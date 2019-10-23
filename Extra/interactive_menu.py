@@ -2,7 +2,7 @@ from PyInquirer import style_from_dict, Token, prompt, Separator, Validator, Val
 
 
 class Menu:
-    def __init__(self):
+    def __init__(self, device_tests):
         self.custom_style_2 = style_from_dict({
             Token.Separator: '#6C6C6C',
             Token.QuestionMark: '#FF9D00 bold',
@@ -14,55 +14,42 @@ class Menu:
             Token.Question: '',
         })
 
-        self.questions = [
+
+        self.questions1 = [
+            {
+                'type': 'list',
+                'qmark': '⋄',
+                'name': 'devices',
+                'message': 'Seleziona il dispositivo da collaudare:',
+                'choices': [
+                    'MEDIA3N_SERVER',
+                    'OBOE',
+                ],
+            }
+            ]
+
+        
+        #Dopo aver selezionato il device, queste righe successive definiscono le liste di test per quel dispositiv0
+        self.answer = prompt(self.questions1, style=self.custom_style_2)
+        self.hardware_tests = [{'name' : t} for t in device_tests[self.answer['devices']]['hardware']] 
+        self.software_tests = [{'name' : t} for t in device_tests[self.answer['devices']]['software']] 
+        self.esterno_test = [{'name' : t} for t in device_tests[self.answer['devices']]['esterno']] 
+
+
+        self.questions2 = [
             {
                 'type': 'checkbox',
-                'qmark': '',
+                'qmark': '⋄',
                 'message': 'Seleziona i test da effettuare',
                 'name': 'tests',
                 'choices': [ 
                     Separator('Test Hardware:'),
-                    {
-                        'name': 'cpu'
-                    },
-                    {
-                        'name' : 'ram'
-                    },
-                    {
-                        'name' : 'hdd' 
-                    },
-                    {
-                        'name' : 'ups' 
-                    },
+                    *(self.hardware_tests),
                     Separator('Test Software'),
-                    {
-                        'name' : 'bios' 
-                    },
-                    {
-                        'name' : 'smartalim_fw' 
-                    },
-                    {
-                        'name' : 'swkit' 
-                    },
+                    *(self.software_tests),
                     Separator('Test Esterni'),
-                    {
-                        'name' : 'reset'
-                    },
-                    {
-                        'name' : 'lan' 
-                    },
-                    {
-                        'name' : 'usb' 
-                    },
-                    {
-                        'name' : 'hdmi' 
-                    },
-                    {
-                        'name' : 'serial_usb' 
-                    }
-                ],
-                'validate': lambda answer: 'Scegli almeno un test da effettuare.' \
-                    if len(answer) == 0 else True
+                    *(self.esterno_test)
+                ]
             },
             {
                 'type': 'input',
@@ -81,10 +68,16 @@ class Menu:
                 'qmark': '-',
                 'name': 'product_code',
                 'message': 'Inserire il codice prodotto:',
-        }
+            },
+            {
+                'type': 'input',
+                'qmark': '-',
+                'name': 'part_number',
+                'message': 'Inserire il Part Number del dispositivo:',
+            }
                 ]
-        
-        self.answer = prompt(self.questions, style=self.custom_style_2)
+        self.answer2 = prompt(self.questions2, style=self.custom_style_2)
+        self.answer.update(self.answer2)
         
 
 # answers = prompt(questions, style=custom_style_2)

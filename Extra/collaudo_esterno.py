@@ -16,20 +16,21 @@ class CollaudoEsterno(Collaudo):
         input("Premi Enter per continuare, poi premi Reset sul dispositivo.")
         print("Aspettando il reset..")
         flag = 0
-        running = 0
+        start_time = time.time()
+        time_limit = 240 #secondi
         while True:
             asd = subprocess.check_output(("ping -c 1 %s &>/dev/null ; echo $?"%device_info_ssh["device_ssh_ip"]), shell=True).decode("utf-8").rstrip()
             if asd == "0":
                 if flag == 0 or flag == 1:
-                    if running < 10000:
+                    if (time.time()-start_time) < time_limit:
                         flag = 1
-                        running += 1
                         continue
                     else:
                         print("Time Limit: nel caso si pensi di non essere riusciti a riavviare in tempo si riprovi il test.")
                         return False
                 else:
                     print("Il dispositivo è nuovamente acceso, continuo il collaudo...")
+                    start_time = time.time()
                     while True:
                         try:
                             subprocess.check_output(("sshpass -p %s ssh -o ConnectTimeout=10 -q "
@@ -37,33 +38,31 @@ class CollaudoEsterno(Collaudo):
                             %(device_info_ssh["device_ssh_passwd"], device_info_ssh["device_ssh_user"], device_info_ssh["device_ssh_ip"])).split())
                             return True
                         except:
-                            running += 1
-                            time.sleep(0.1)
-                            if running > 2000:
-                                print("Il server ssh del dispositivo non sembra riuscire ad attivarsi. Riprovare il collaudo.")
+                            if (time.time()-start_time) > time_limit:
+                                print("Il server ssh del dispositivo non sembra riuscire ad avviarsi. Riprovare il collaudo.")
                                 sys.exit(1)
                             continue
             elif asd == "2" or asd == "1":
                 if flag == 1:
                     flag = 2
                     print("Il dispositivo si è riavviato, attendere...")
-                    running = 0
-                running += 1
-                if running > 1000:
+                    start_time = time.time()
+                if (time.time()-start_time) > time_limit:
                     print("Il dispositivo non riesce a riaccendersi.")
                     return False
             else:
                 print("Errore nel riavvio del dispositivo, riprovare il collaudo.")
                 return False
-            running += 1
         return False
 
     def usb(self):
-        disks_before = self.send_ssh_command("lsusb | awk '{print $2}'")
+        disks_before = self.send_ssh_command("lsusb | awk '{print $6}'")
         input("Inserire la chiavetta USB, poi premi il tasto Enter per continuare.") 
         print("Controllando...")
         time.sleep(3)
-        disks_after = self.send_ssh_command("lsusb | awk '{print $2}'")
+        disks_after = self.send_ssh_command("lsusb | awk '{print $6}'")
+        logging.info("Elenco dei dispositivi prima dell'inserimento nella porta USB:%s", disks_before)
+        logging.info("Elenco dei dispositivi dopo l'inserimento nella porta USB:%s", disks_after)
         return disks_after.splitlines() != disks_before.splitlines()
 
     def hdmi(self):
@@ -106,16 +105,13 @@ class CollaudoEsterno(Collaudo):
         usb_before = subprocess.check_output("lsusb")
         input("Inserisci la seriale nella porta USB di questo terminale e premi Enter.")
         usb_after = subprocess.check_output("lsusb")
-        # if usb_before.decode("utf-8").find("Serial") != -1:
-        #     input("Sembra che la seriale fosse già collegata a questo terminale.\nScollegala e premi Enter per eseguire nuovamente il test")
-        # else:
         return usb_after.decode("utf-8").find("Serial") != -1
 
 
-if __name__ == '__main__':
-    if len(sys.argv) == 1:
-        full_collaudo = CollaudoEsterno()
-        full_collaudo.make_full_collaudo()
-    else:
-        partial_collaudo = CollaudoEsterno()
-        partial_collaudo.make_partial_collaudo()
+# if __name__ == '__main__':
+#     if len(sys.argv) == 1:
+#         full_collaudo = CollaudoEsterno()
+#         full_collaudo.make_full_collaudo()
+#     else:
+#         partial_collaudo = CollaudoEsterno()
+#         partial_collaudo.make_partial_collaudo()

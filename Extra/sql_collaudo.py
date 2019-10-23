@@ -38,7 +38,7 @@ class MySQL:
         l = len(keys) - 1
 
         for i, key in enumerate(keys):
-            query += key+" "
+            query += "`"+key+"` "
             if i < l:
                 query += ","
         ## End for keys
