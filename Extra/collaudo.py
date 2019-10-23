@@ -27,18 +27,18 @@ class Collaudo:
     device_tests = device_tests_db # TODO Questo verrà preso da db
     device_names = ["MEDIA3N_SERVER", "OBOE"]
     test_values = {
-                    "hdd" : [None, None, None],
-                    "ram" : [None, None, None],
-                    "usb" : [None, None, None],
-                    "hdmi" : [None, None, None],
-                    "serial_usb" : [None, None, None],
-                    "cpu" : [None, None, None],
-                    "swkit" : [None, None, None],
-                    "smartalim_fw" : [None, None, None],
-                    "bios" : [None, None, None],
-                    "reset" : [None, None, None],
-                    "ups" : [None, None, None],
-                    "lan" : [None, None, None]
+                    "hdd" : [None, None, None, None],
+                    "ram" : [None, None, None, None],
+                    "usb" : [None, None, None, None],
+                    "hdmi" : [None, None, None, None],
+                    "serial_usb" : [None, None, None, None],
+                    "cpu" : [None, None, None, None],
+                    "swkit" : [None, None, None, None],
+                    "smartalim_fw" : [None, None, None, None],
+                    "bios" : [None, None, None, None],
+                    "reset" : [None, None, None, None],
+                    "ups" : [None, None, None, None],
+                    "lan" : [None, None, None, None]
                     }
     
     '''Definizione dei metodi condivisi fra tutti i tipi di collaudi.'''
@@ -50,7 +50,7 @@ class Collaudo:
             - "is_equal"
             - ""
         Il parametro verify_value ideve essere una stringa e fa riferimento
-        al test "is_equal".
+        al test "is_equal". TODO: aggiungere tipi di test generici
         '''
         tests = {
                 "is_equal" : self.is_equal
@@ -185,14 +185,15 @@ class Collaudo:
 
     def make_full_collaudo(self):
         '''Questa funzione genera il collaudo completo come richiesto dall'utente, noto il dispositivo
-        e i test da effettuare su questo.
+        e i test da effettuare su questo. Stampa sullo schermo i risultati dei test e TODO salverà
+        tutto sul db.
         '''
         if self.interactive:
             print("\nInizio", self.__class__.__name__,":")
             for func_names in self.functions_names:
                 if func_names in self.functions_names and func_names in menu.answer['tests']:
                     logging.info(f"TEST {func_names.upper()}:")
-                    tmp_return_value = self.functions_names[func_names]()
+                    tmp_return_value = self.functions_names[func_names]()           #Esecuzione funzioni di collaudo
                     logging.info(f"Test result: {self.nicer_outpu(tmp_return_value)}\n")
                     Collaudo.test_values[func_names][0] = tmp_return_value
                     print("Test", func_names.upper(), ":", self.nicer_output(tmp_return_value))
@@ -201,7 +202,7 @@ class Collaudo:
             for func_names in arg_test_list:
                 if func_names in self.functions_names:
                     logging.info(f"TEST {func_names.upper()}:")
-                    tmp_return_value = self.functions_names[func_names]()
+                    tmp_return_value = self.functions_names[func_names]()           #Esecuzione funzioni di collaudo
                     logging.info(f"Test result: {self.nicer_outpu(tmp_return_value)}\n")
                     Collaudo.test_values[func_names][0] = tmp_return_value
                     print("Test", func_names.upper(),":", self.nicer_output(tmp_return_value))

@@ -85,9 +85,11 @@ class CollaudoEsterno(Collaudo):
         while True:
             input("Si inserisca il cavo nella porta LAN 1, poi si prema Enter.")
             time.sleep(4)
-            lan_1 = self.send_ssh_command("ip a | grep eth0 | sed -n 's/.* state \\([^ ]*\\).*/\\1/p'")
-            lan_2 = self.send_ssh_command("ip a | grep eth1 | sed -n 's/.* state \\([^ ]*\\).*/\\1/p'")
-            if lan_2 == "UP" and lan_1 == "DOWN":
+            lan_1 = [self.send_ssh_command("ip a | grep eth0 | sed -n 's/.* state \\([^ ]*\\).*/\\1/p'"), 
+                    self.send_ssh_command("ip a | grep -A1 'eth0' | sed -n 's,.* link/ether \([^ ]*\).*,\1,p'"]
+            lan_2 = [self.send_ssh_command("ip a | grep eth1 | sed -n 's/.* state \\([^ ]*\\).*/\\1/p'"),
+                    self.send_ssh_command("ip a | grep -A1 'eth1' | sed -n 's,.* link/ether \([^ ]*\).*,\1,p'"]
+            if lan_2[0] == "UP" and lan_1[0] == "DOWN":
                 print("Sembra che la LAN sia stata inserita nella porta LAN 2. Vuoi riprovare? [si/no]")
                 si_no = input("")
                 if si_no == "si" or si_no == "Si" or si_no == "SI":
@@ -96,8 +98,9 @@ class CollaudoEsterno(Collaudo):
                     pass
             input("Si inserisca il cavo nella porta LAN 2, poi si prema Enter.")
             time.sleep(4)
-            lan_2 = self.send_ssh_command("ip a | grep eth1 | sed -n 's/.* state \\([^ ]*\\).*/\\1/p'")
-            return lan_1 == "UP" and lan_2 == "UP"
+            lan_2 = [self.send_ssh_command("ip a | grep eth1 | sed -n 's/.* state \\([^ ]*\\).*/\\1/p'"),
+                    self.send_ssh_command("ip a | grep -A1 'eth1' | sed -n 's,.* link/ether \([^ ]*\).*,\1,p'"]
+            return lan_1[0] == "UP" and lan_2[0] == "UP"
             
     
     def serial_usb(self):

@@ -13,14 +13,14 @@ class CollaudoSoftware(Collaudo):
         if bios_version == None:
             bios_version = Collaudo.device_info["device_bios"]
         version_bios = self.send_ssh_command("dmidecode -s bios-version")
-        logging.info("Versione BIOS di riferimento: %s. Versione sul device %s", bios_version, version_bios)
+        logging.info(f"Versione BIOS di riferimento: {bios_version}. Versione sul device {version_bios}")
         return bios_version == version_bios
 
     def smartalim_fw(self, smartalim_version=None):
         if smartalim_version == None:
             smartalim_version = Collaudo.device_info["device_smartalim_version"]
         version_smartalim = self.send_ssh_command("cat /proc/smartalim/fw_version")
-        logging.info("Versione FW della Smartalim di riferimento: %s. Versione sul device %s", smartalim_version, version_smartalim)
+        logging.info("Versione FW della Smartalim di riferimento: {smartalim_version}. Versione sul device {version_smartalim}")
         return version_smartalim == smartalim_version
 
     def swkit(self, swkit_version=None): #chiedi dove trovare il /deviceinfo per il secondo disco

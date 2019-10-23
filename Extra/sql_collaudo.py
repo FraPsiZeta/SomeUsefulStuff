@@ -74,7 +74,8 @@ class MySQL:
                 query += ","
             ## End if i less than 1
         ## End for keys
-        query += " WHERE %s" % where
+        if where:
+            query += " WHERE %s" % where
 
         self.__connect()
         self.__cursor.execute(query, values)
