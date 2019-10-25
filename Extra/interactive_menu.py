@@ -1,8 +1,25 @@
 from PyInquirer import style_from_dict, Token, prompt, Separator, Validator, ValidationError
+import re
 
+
+class PartNumberValidator(Validator):
+    def validate(self, document):
+        ok = re.search('^PS[0-9]{4}-[0-9]{2}$', document.text)
+        if ok == None:
+            raise ValidationError(
+                message='Il Part Number inserito non è corretto. La forma corretta è PSXXXX-XX, dove con X si rappresenta un numero.',
+                cursor_position=len(document.text)) # Move cursor to end
+
+class UserNameValidator(Validator):
+    def validate(self, document):
+        ok = re.search('^[a-z]*\\.[a-z]*$', document.text)
+        if ok == None:
+            raise ValidationError(
+                message='Il nome del collaudatore deve essere della forma "nome.cognome"',
+                cursor_position=len(document.text)) # Move cursor to end
 
 class Menu:
-    def __init__(self, device_tests):
+    def __init__(self):
         self.custom_style_2 = style_from_dict({
             Token.Separator: '#6C6C6C',
             Token.QuestionMark: '#FF9D00 bold',
@@ -14,6 +31,7 @@ class Menu:
             Token.Question: '',
         })
 
+    def start_menu(self, device_tests, device_names, configurations_name):
 
         self.questions1 = [
             {
@@ -21,19 +39,26 @@ class Menu:
                 'qmark': '⋄',
                 'name': 'devices',
                 'message': 'Seleziona il dispositivo da collaudare:',
-                'choices': [
-                    'MEDIA3N_SERVER',
-                    'OBOE',
-                ],
+                'choices': device_names,
+            },
+            {
+                'type': 'list',
+                'qmark': '⋄',
+                'name': 'trains',
+                'message': 'Seleziona il tipo di treno su cui si installerà il dispositivo:',
+                'choices': configurations_name,
             }
             ]
 
         
-        #Dopo aver selezionato il device, queste righe successive definiscono le liste di test per quel dispositiv0
+        #Dopo aver selezionato il device, queste righe definiscono le liste di test per quel dispositivo
         self.answer = prompt(self.questions1, style=self.custom_style_2)
-        self.hardware_tests = [{'name' : t} for t in device_tests[self.answer['devices']]['hardware']] 
-        self.software_tests = [{'name' : t} for t in device_tests[self.answer['devices']]['software']] 
-        self.esterno_test = [{'name' : t} for t in device_tests[self.answer['devices']]['esterno']] 
+        try:
+            self.hardware_tests = [{'name' : t} for t in device_tests[self.answer['devices']]['hardware']] 
+            self.software_tests = [{'name' : t} for t in device_tests[self.answer['devices']]['software']] 
+            self.esterno_test = [{'name' : t} for t in device_tests[self.answer['devices']]['esterno']] 
+        except:
+            pass
 
 
         self.questions2 = [
@@ -56,6 +81,7 @@ class Menu:
                 'qmark': '-',
                 'name': 'tester_name',
                 'message': 'Inserire il nome del collaudatore:',
+                'validate' : UserNameValidator
             },
             {
                 'type': 'input',
@@ -72,8 +98,16 @@ class Menu:
             {
                 'type': 'input',
                 'qmark': '-',
+                'name': 'test_number',
+                'message': 'Inserire il numero del collaudo:',
+            },
+            {
+                'type': 'input',
+                'qmark': '-',
                 'name': 'part_number',
                 'message': 'Inserire il Part Number del dispositivo:',
+                'validate' : PartNumberValidator
+
             }
                 ]
         self.answer2 = prompt(self.questions2, style=self.custom_style_2)

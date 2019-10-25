@@ -1,6 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
 from collections import OrderedDict
+from datetime import datetime
 
 class MySQL:
     def __init__(self):
@@ -18,7 +19,7 @@ class MySQL:
             self.__connection = mysql.connector.connect(**(self.config_options))
             self.__cursor = self.__connection.cursor()
         except Error as err:
-            printf("Errore nella connessione al server MySQL", err)
+            print("Errore nella connessione al server MySQL", err)
 
     def __close(self):
         self.__cursor.close()
@@ -141,23 +142,3 @@ class MySQL:
         self.__close()
         return result
 
-    # try:
-    #     connection = mysql.connector.connect(**config_options)
-    #     cursor = connection.cursor()
-    #     # cursor.execute("SHOW TABLES")
-    #     cursor.execute("select * from COLLAUDI_HISTORY")
-    #     records = cursor.fetchall()
-    #     # print(cursor.fetchall())
-    #     for row in records:
-    #         print("Id = ", row[0], )
-    #         print("Name = ", row[1])
-    #         print("Price  = ", row[2])
-    #         print("Purchase date  = ", row[3], "\n")
-    # except Error as err:
-    #     print("Errore nella lettura delle tabelle mySQL:", err)
-    # finally:
-    #     if (connection.is_connected()):
-    #         connection.close()
-    #         cursor.close()
-    #         print("MySQL connection is closed")
-    
