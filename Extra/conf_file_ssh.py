@@ -1,5 +1,5 @@
 device_info_ssh = {
-                    "device_ssh_passwd" : "mooch0",
-                    "device_ssh_user" : "root",
-                    "device_ssh_ip" : "172.16.1.2"
+                    "device_ssh_passwd" : "ninonino",
+                    "device_ssh_user" : "francesco",
+                    "device_ssh_ip" : "137.204.240.77"
                     }

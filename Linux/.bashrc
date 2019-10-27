@@ -2,7 +2,7 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 # PS1="\[\e[92m\]Fra#Psi:\w>\[\e[m\]"
-PS1="\e[38;5;82mFra#Psi:\w>\e[m\]"
+PS1="\[\e[38;5;82m\]Fra#Psi:\w>\[\e[m\]"
 
 bind TAB:menu-complete
 

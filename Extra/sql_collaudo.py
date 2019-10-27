@@ -1,3 +1,4 @@
+import sys
 import mysql.connector
 from mysql.connector import Error
 from collections import OrderedDict
@@ -19,7 +20,10 @@ class MySQL:
             self.__connection = mysql.connector.connect(**(self.config_options))
             self.__cursor = self.__connection.cursor()
         except Error as err:
-            print("Errore nella connessione al server MySQL", err)
+            print("\nErrore nella connessione al server MySQL", err)
+            print("Nessun dato caricato sul database.")
+            print("Esco..")
+            sys.exit(1)
 
     def __close(self):
         self.__cursor.close()
@@ -29,6 +33,7 @@ class MySQL:
         self.__connect()
         self.__cursor.execute(query)
         result = self.__cursor.fetchall()
+        self.__close()
         return result
 
     def select(self, table, *args, where=None, **kwargs):

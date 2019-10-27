@@ -45,8 +45,6 @@ class Collaudo:
         self.argument_parser()
         if len(sys.argv) == 1 or arg_interactive == True:
             self.interactive = True
-        self.start()
-        self.set_test()
 
     '''In seguito le variabili che racchiudono i risultati dei test, i test da effettuare su
     ciascun dispositivo e i valori con cui confrontare i risultati. In futuro verranno
@@ -77,25 +75,53 @@ class Collaudo:
                     "lan" : [None, None, None, None]
                     }
     
-    '''Definizione dei metodi condivisi fra tutti i tipi di collaudi.'''
+    '''Definizione dei metodi condivisi fra tutti i tipi di collaudo.'''
 
-    def custom_test(self, ssh_command="", test_type="is_equal", verify_value="42"):
+    def custom_test(
+                    self, ssh_command="", 
+                    test_type="is_equal", 
+                    verify_value=None, 
+                    min_value=None, 
+                    max_value=None):
         '''Funzione che permette di compiere test più o meno arbitrari.
         Il parametro ssh_command richiede il comando da inviare al device.
         Il parametro test_type può essere:
             - "is_equal"
-            - ""
-        Il parametro verify_value ideve essere una stringa e fa riferimento
-        al test "is_equal". TODO: aggiungere tipi di test generici
+            - "is_less"
+            - "is_more
+            - "is_between
+        TODO: aggiungere tipi di test generici
         '''
-        tests = {
-                "is_equal" : self.is_equal
-                }
-        return tests[test_type](ssh_command, verify_value)
 
-    def is_equal(self, command, value):
-        '''Ritorna True se il risultato di "command" è uguale a "value".'''
-        return self.send_ssh_command(command) == value
+        def is_equal(command, value, min_value, max_value):
+            '''Ritorna True se il risultato di "command" è uguale a "value".'''
+            resu = self.send_ssh_command(command)
+            return [resu == value, resu, min_value, max_value]
+    
+        def is_less(command, value, min_value, max_value):
+            resu = self.send_ssh_command(command)
+            return [float(resu) < float(value), resu, min_value, max_value]
+    
+        def is_more(command, value, min_value, max_value):
+            resu = self.send_ssh_command(command)
+            return [float(resu) > float(value), value, min_value, max_value]
+    
+        def is_between(command, min_value, max_value):
+            resu = self.send_ssh_command(command)
+            return [float(resu) > float(min_value) and float(resu) < float(max_value), value, min_value, max_value]
+
+        tests = {
+                "is_equal" : is_equal,
+                "is_less" : is_less,
+                "is_more" : is_more,
+                "is_between" : is_between
+                }
+        
+        try:
+            return tests[test_type](ssh_command, verify_value, min_value, max_value)
+        except ValueError as err:
+            print("Si è verificato un problema con il risultato del comando SSH: "
+                    "probabilmente non un numero.\nErrore:", err)
 
     def send_ssh_command(
             self, command, 
@@ -311,6 +337,8 @@ class Collaudo:
         Il blocco di eccezione è stato aggiunto per evitare che vengano chimati metodi non appartenenti
         alla classe a cui l'oggetto istanziato appartiene.
         '''
+        self.start()
+        self.set_test()
         print_first = Collaudo.run_once(print)
         if self.interactive:
             for func_names in Collaudo.test_values:
@@ -323,7 +351,6 @@ class Collaudo:
                     self.fill_test_results(func_names, tmp_return_value)
                     print("Test", func_names.upper(), ":", self.nicer_output(tmp_return_value[0]))
         else:
-            print("\nInizio", self.__class__.__name__,":")
             for func_names in arg_test_list:
                 try:
                     tmp_return_value = getattr(self, func_names)()            
