@@ -1,0 +1,24 @@
+[submodule "Generic/bundle/ale"]
+	path = Generic/bundle/ale
+	url = https://github.com/dense-analysis/ale.git
+[submodule "Generic/bundle/nord-vim"]
+	path = Generic/bundle/nord-vim
+	url = https://github.com/arcticicestudio/nord-vim.git
+[submodule "Generic/bundle/vim-commentary"]
+	path = Generic/bundle/vim-commentary
+	url = https://github.com/tpope/vim-commentary.git
+[submodule "Generic/bundle/vim-cpp-enhanced-highlight"]
+	path = Generic/bundle/vim-cpp-enhanced-highlight
+	url = https://github.com/octol/vim-cpp-enhanced-highlight.git
+[submodule "Generic/bundle/vim-hybrid"]
+	path = Generic/bundle/vim-hybrid
+	url = https://github.com/w0ng/vim-hybrid
+[submodule "Generic/bundle/vim-indent-object"]
+	path = Generic/bundle/vim-indent-object
+	url = https://github.com/michaeljsmith/vim-indent-object.git
+[submodule "Generic/bundle/YouCompleteMe"]
+	path = Generic/bundle/YouCompleteMe
+	url = https://github.com/ycm-core/YouCompleteMe
+[submodule "Generic/bundle/gruvbox"]
+	path = Generic/bundle/gruvbox
+	url = https://github.com/morhetz/gruvbox.git
